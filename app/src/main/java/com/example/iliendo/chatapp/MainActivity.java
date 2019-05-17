@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class  MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
@@ -40,7 +41,7 @@ public class  MainActivity extends AppCompatActivity {
         // Check if the user is already logged in
         if (mAuth.getCurrentUser() != null) {
             finish();
-            startActivity(new Intent(getApplicationContext(), SignIn.class));
+            startActivity(new Intent(getApplicationContext(), Welcome.class));
         }
 
         // Button interaction
@@ -69,7 +70,7 @@ public class  MainActivity extends AppCompatActivity {
      * @param email    of user
      * @param password chosen by the user
      */
-    private void signUp(String email, String password, String passwordRepeat) {
+    private void signUp(String email, final String password, String passwordRepeat) {
         if (matchPassword(password, passwordRepeat)) {
             mAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -78,11 +79,12 @@ public class  MainActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 // Sign in success, update UI with the signed-in user's information
                                 FirebaseUser user = mAuth.getCurrentUser();
-                                displayName(mNickname.getText().toString().trim());
-                            } else {
-                                // If sign in fails, display a message to the user.
-                                Toast.makeText(MainActivity.this, "Something went wrong",
+
+                                setNickname(mNickname.getText().toString().trim());
+                                Toast.makeText(MainActivity.this, "The account has been registered",
                                         Toast.LENGTH_SHORT).show();
+                            } else {
+                                passwordLength(password);
                             }
                         }
                     });
@@ -94,43 +96,54 @@ public class  MainActivity extends AppCompatActivity {
      * @param email that the user provides
      * @param password that the user provides
      */
-    private void signIn(String email, String password){
+    private void signIn(String email, final String password){
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Intent i = new Intent(MainActivity.this, SignIn.class);
+                            Intent i = new Intent(MainActivity.this, Welcome.class);
                             finish();
                             startActivity(i);
                         } else {
-                            // If sign in fails, display a message to the user.
-                            Toast.makeText(MainActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            // Error handling
+
                         }
                     }
                 });
     }
 
-    // Display the name of the user when sign in is successful
-    private void displayName(String name){
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    // Set the nickname in the database
+    private void setNickname(String name){
+        FirebaseUser user = mAuth.getCurrentUser();
+        System.out.println("120");
         if (user != null) {
-            // Name, email address, and profile photo Url
-            String nickName = user.getDisplayName();
+            System.out.println("122");
+            UserProfileChangeRequest profileUpdate = new UserProfileChangeRequest.Builder()
+                    .setDisplayName(name).build();
 
-            // Check if user's email is verified
-            boolean emailVerified = user.isEmailVerified();
-
-            // The user's ID, unique to the Firebase project. Do NOT use this value to
-            // authenticate with your backend server, if you have one. Use
-            // FirebaseUser.getToken() instead.
-            String uid = user.getUid();
+            user.updateProfile(profileUpdate).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful()){
+                        Toast.makeText(MainActivity.this, "The Name has been registered",
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(MainActivity.this, "The name has NOT been registered",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         }
     }
 
-    // Checks whether the password match with each other
+    /**
+     * Checks whether the password match with each other
+     * @param password provided by the user
+     * @param passwordRepeat provided by the user
+     * @return
+     */
     private boolean matchPassword(String password, String passwordRepeat){
         if(!password.equals(passwordRepeat)){
             Toast.makeText(MainActivity.this, "Passwords don't match",
@@ -138,6 +151,13 @@ public class  MainActivity extends AppCompatActivity {
             return false;
         } else {
             return true;
+        }
+    }
+
+    private void passwordLength(String password){
+        if(password.length() < 6) {
+            Toast.makeText(MainActivity.this, "Passwords should contain 6 characters",
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
