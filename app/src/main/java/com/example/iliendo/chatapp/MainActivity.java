@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,29 +29,27 @@ public class  MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        // Textfields
+        // Textfields initialization
         mNickname = findViewById(R.id.et_nickname);
         mEmail = findViewById(R.id.et_email);
         mPassword = findViewById(R.id.et_password);
         mPasswordRepeat = findViewById(R.id.et_repeat_password);
 
-        // Buttons
+        // Buttons initialization
         mRegister = findViewById(R.id.btn_register);
         mSignIn = findViewById(R.id.btn_signin);
 
-        // Check if the user is already logged in
+        // Check if the user is already logged in, if so: redirect
         if (mAuth.getCurrentUser() != null) {
             finish();
             startActivity(new Intent(getApplicationContext(), Welcome.class));
         }
 
-        // Button interaction
         mRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 signUp(mEmail.getText().toString().trim(), mPassword.getText().toString().trim(),
                         mPasswordRepeat.getText().toString().trim());
-
             }
         });
 
@@ -66,9 +65,9 @@ public class  MainActivity extends AppCompatActivity {
 
     /**
      * Sign up for an account
-     *
-     * @param email    of user
-     * @param password chosen by the user
+     * @param email provided by the user
+     * @param password provided by the user
+     * @param passwordRepeat provided by the user to check if the password is spelled correctly
      */
     private void signUp(String email, final String password, String passwordRepeat) {
         if (matchPassword(password, passwordRepeat)) {
@@ -114,24 +113,22 @@ public class  MainActivity extends AppCompatActivity {
                 });
     }
 
-    // Set the nickname in the database
-    private void setNickname(String name){
+    /**
+     * Set the nickname for the account
+     * @param nickname provided by the user
+     */
+    private void setNickname(String nickname){
         FirebaseUser user = mAuth.getCurrentUser();
-        System.out.println("120");
+
         if (user != null) {
-            System.out.println("122");
             UserProfileChangeRequest profileUpdate = new UserProfileChangeRequest.Builder()
-                    .setDisplayName(name).build();
+                    .setDisplayName(nickname).build();
 
             user.updateProfile(profileUpdate).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
-                    if(task.isSuccessful()){
-                        Toast.makeText(MainActivity.this, "The Name has been registered",
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(MainActivity.this, "The name has NOT been registered",
-                                Toast.LENGTH_SHORT).show();
+                    if(!task.isSuccessful()){
+                        Log.v("Name", "Problem with saving the name in the database");
                     }
                 }
             });
@@ -160,5 +157,4 @@ public class  MainActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
         }
     }
-
 }
