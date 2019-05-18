@@ -12,7 +12,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class Welcome extends AppCompatActivity {
     private FirebaseAuth mAuth;
-    private Button mSignOut;
+    private Button mSignOut, mUploadData, mViewData;
     private TextView nickname;
 
     @Override
@@ -23,6 +23,8 @@ public class Welcome extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mSignOut = findViewById(R.id.btn_signout);
         nickname = findViewById(R.id.tf_username);
+        mUploadData = findViewById(R.id.btn_upload_data);
+        mViewData = findViewById(R.id.btn_view_data);
 
         if(mAuth.getCurrentUser() == null){
             finish();
@@ -45,6 +47,21 @@ public class Welcome extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
             }
         });
+
+        mUploadData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), UploadData.class));
+            }
+        });
+
+        mViewData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
     }
 
 }
