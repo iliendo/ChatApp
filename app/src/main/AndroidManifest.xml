@@ -22,6 +22,8 @@
         <activity android:name=".Welcome" />
         <activity android:name=".UploadData" />
         <activity android:name=".ShowData" />
+        <activity android:name=".Register" />
+        <activity android:name=".ResetPassword"></activity>
     </application>
 
 </manifest>
