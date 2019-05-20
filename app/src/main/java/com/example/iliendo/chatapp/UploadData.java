@@ -90,7 +90,7 @@ public class UploadData extends AppCompatActivity {
         mUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String name = mAuth.getCurrentUser().getDisplayName().toString();
+                String name = mAuth.getCurrentUser().getEmail().toString();
 
                 if(name.isEmpty()){
                     Log.d("97", "Username doens't exist");
