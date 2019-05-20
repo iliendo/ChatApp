@@ -35,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
 public class UploadData extends AppCompatActivity {
     // Assets
     private ImageView mImageView;
-    private Button mSelectImage, mUpload;
+    private Button mSelectImage;
 
     public static final int READ_EXTERNAL_STORAGE = 0;
     private static final int GALLERY_INTENT = 0;
@@ -43,9 +43,6 @@ public class UploadData extends AppCompatActivity {
     private Uri mImageUri;
     private DatabaseReference mDatabaseRef;
     private StorageReference mStorageRef;
-
-    private ProgressBar mProgressBar;
-    private int mProgressStatus = 0;
 
     private Handler mHandler = new Handler();
 
@@ -63,8 +60,6 @@ public class UploadData extends AppCompatActivity {
         // Initialization of assets
         mImageView = findViewById(R.id.iv_profile);
         mSelectImage = findViewById(R.id.btn_select_image);
-        mUpload = findViewById(R.id.btn_upload);
-        mProgressBar = findViewById(R.id.pb_upload_progress);
 
         mSelectImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,12 +67,18 @@ public class UploadData extends AppCompatActivity {
 
                 // Checks for permission
                 if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED){
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                        != PackageManager.PERMISSION_GRANTED) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, READ_EXTERNAL_STORAGE);
                     }
-                } else {
+                }  else {
                     callGallery();
+                    // Gives the image a name unique to the user
+                    String name = mAuth.getCurrentUser().getEmail().toString();
+
+                    Firebase childRefName = mRoofRef.child("Image_Title");
+                    childRefName.setValue(name);
+
                 }
             }
         });
@@ -86,39 +87,6 @@ public class UploadData extends AppCompatActivity {
         mDatabaseRef = FirebaseDatabase.getInstance().getReference();
         mRoofRef = new Firebase("https://chatapp-8568a.firebaseio.com/").child("User_Details").push();
         mStorageRef = FirebaseStorage.getInstance().getReferenceFromUrl("gs://chatapp-8568a.appspot.com/");
-
-        mUpload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String name = mAuth.getCurrentUser().getEmail().toString();
-
-                if(name.isEmpty()){
-                    Log.d("97", "Username doens't exist");
-                } else {
-                    Firebase childRefName = mRoofRef.child("Image_Title");
-                    childRefName.setValue(name);
-                }
-            }
-        });
-
-        // Activates the progressbar in a new thread to prevent slowdowns
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(mProgressStatus < 100){
-                    mProgressStatus++;
-                    android.os.SystemClock.sleep(1000);
-
-                    // Sets the status in the ui
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            mProgressBar.setProgress(mProgressStatus);
-                        }
-                    });
-                }
-            }
-        }).start();
 
     }
 
@@ -154,8 +122,6 @@ public class UploadData extends AppCompatActivity {
             // User_images is the name of the folder
             StorageReference filePath = mStorageRef.child("User_Image").child(mImageUri.getLastPathSegment());
 
-            // TODO: implement progressbar status
-
             filePath.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -165,10 +131,8 @@ public class UploadData extends AppCompatActivity {
 
                     Glide.with(getApplicationContext())
                             .load(downloadUri)
-                            //.placeholder(R.drawable.loading)
                             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                             .into(mImageView);
-                    Log.d("173", "Why does it upload?");
                     Toast.makeText(getApplicationContext(), "Image has been uploaded", Toast.LENGTH_SHORT).show();
                 }
             });
