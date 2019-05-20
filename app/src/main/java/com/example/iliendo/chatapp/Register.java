@@ -99,6 +99,8 @@ public class Register extends AppCompatActivity {
                                 Toast.makeText(Register.this, "The account has been registered",
                                         Toast.LENGTH_SHORT).show();
                             }
+                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+
                         }
                     });
         }

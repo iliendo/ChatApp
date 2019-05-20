@@ -9,23 +9,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class  MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private EditText mNickname, mEmail, mPassword, mPasswordRepeat;
     private Button mSignIn;
-    private TextView mRegister;
+    private TextView mRegister, mBtnForgotPass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +32,7 @@ public class  MainActivity extends AppCompatActivity {
         mEmail = findViewById(R.id.et_email);
         mPassword = findViewById(R.id.et_password);
         mRegister = findViewById(R.id.btn_sign_up);
+        mBtnForgotPass = findViewById(R.id.btn_forgot_password);
 
         // Buttons initialization
         mSignIn = findViewById(R.id.btn_signin);
@@ -59,6 +54,13 @@ public class  MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 signIn(mEmail.getText().toString().trim(), mPassword.getText().toString().trim());
+            }
+        });
+
+        mBtnForgotPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), ResetPassword.class));
             }
         });
 
