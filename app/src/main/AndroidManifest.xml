@@ -3,6 +3,7 @@
     package="com.example.iliendo.chatapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -19,7 +20,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".Welcome" />
-        <activity android:name=".UploadData"></activity>
+        <activity android:name=".UploadData" />
+        <activity android:name=".ShowData"></activity>
     </application>
 
 </manifest>
