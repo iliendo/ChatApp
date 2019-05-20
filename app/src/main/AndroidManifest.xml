@@ -21,7 +21,7 @@
         </activity>
         <activity android:name=".Welcome" />
         <activity android:name=".UploadData" />
-        <activity android:name=".ShowData"></activity>
+        <activity android:name=".ShowData" />
     </application>
 
 </manifest>

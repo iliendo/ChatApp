@@ -23,6 +23,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.client.Firebase;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -35,7 +36,6 @@ public class UploadData extends AppCompatActivity {
     // Assets
     private ImageView mImageView;
     private Button mSelectImage, mUpload;
-    private EditText mTitle;
 
     public static final int READ_EXTERNAL_STORAGE = 0;
     private static final int GALLERY_INTENT = 0;
@@ -49,37 +49,36 @@ public class UploadData extends AppCompatActivity {
 
     private Handler mHandler = new Handler();
 
+    private FirebaseAuth mAuth;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload_data);
 
         Firebase.setAndroidContext(this);
+        mAuth = FirebaseAuth.getInstance();
 
         // Initialization of assets
         mImageView = findViewById(R.id.iv_profile);
         mSelectImage = findViewById(R.id.btn_select_image);
         mUpload = findViewById(R.id.btn_upload);
-        mTitle = findViewById(R.id.tf_title);
         mProgressBar = findViewById(R.id.pb_upload_progress);
 
         mSelectImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("G", "Upload image selected");
 
-                // Checks for runtime permission
+                // Checks for permission
                 if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED){
-                    Log.d("73", "73");
                     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
                         requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, READ_EXTERNAL_STORAGE);
                     }
                 } else {
-                    Log.d("79", "else statement");
                     callGallery();
                 }
-                Log.d("81", "81");
             }
         });
 
@@ -91,15 +90,13 @@ public class UploadData extends AppCompatActivity {
         mUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String mName = mTitle.getText().toString().trim();
+                String name = mAuth.getCurrentUser().getDisplayName().toString();
 
-                if(mName.isEmpty()){
-                    Toast.makeText(getApplicationContext(), "Fill in all the fields", Toast.LENGTH_SHORT).show();
+                if(name.isEmpty()){
+                    Log.d("97", "Username doens't exist");
                 } else {
                     Firebase childRefName = mRoofRef.child("Image_Title");
-                    childRefName.setValue(mName);
-                    Toast.makeText(getApplicationContext(), "Updated info", Toast.LENGTH_SHORT).show();
-
+                    childRefName.setValue(name);
                 }
             }
         });
@@ -171,7 +168,8 @@ public class UploadData extends AppCompatActivity {
                             //.placeholder(R.drawable.loading)
                             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                             .into(mImageView);
-                    Toast.makeText(getApplicationContext(), "Shit is uploaded", Toast.LENGTH_SHORT).show();
+                    Log.d("173", "Why does it upload?");
+                    Toast.makeText(getApplicationContext(), "Image has been uploaded", Toast.LENGTH_SHORT).show();
                 }
             });
         }

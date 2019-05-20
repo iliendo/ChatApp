@@ -30,18 +30,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/iv_profile" />
 
-    <EditText
-        android:id="@+id/tf_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:hint="Title"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_select_image" />
-
     <Button
         android:id="@+id/btn_upload"
         android:layout_width="wrap_content"
@@ -52,7 +40,7 @@
         android:text="Upload"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tf_title" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_select_image" />
 
     <ProgressBar
         android:id="@+id/pb_upload_progress"

@@ -14,6 +14,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
@@ -75,15 +78,32 @@ public class  MainActivity extends AppCompatActivity {
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
+                            if (!task.isSuccessful()) {
+                                try {
+                                    throw task.getException();
+
+                                } catch(FirebaseAuthWeakPasswordException password) {
+
+                                    Toast.makeText(MainActivity.this, "Password is too short",
+                                            Toast.LENGTH_SHORT).show();
+                                } catch(FirebaseAuthUserCollisionException existingEmail) {
+
+                                    Toast.makeText(MainActivity.this, "Email already exists",
+                                            Toast.LENGTH_SHORT).show();
+                                } catch(FirebaseAuthInvalidCredentialsException malformedEmail) {
+
+                                    Toast.makeText(MainActivity.this, "Email is malformed",
+                                            Toast.LENGTH_SHORT).show();
+                                }  catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
                                 // Sign in success, update UI with the signed-in user's information
                                 FirebaseUser user = mAuth.getCurrentUser();
 
                                 setNickname(mNickname.getText().toString().trim());
                                 Toast.makeText(MainActivity.this, "The account has been registered",
                                         Toast.LENGTH_SHORT).show();
-                            } else {
-                                passwordLength(password);
                             }
                         }
                     });
@@ -148,13 +168,6 @@ public class  MainActivity extends AppCompatActivity {
             return false;
         } else {
             return true;
-        }
-    }
-
-    private void passwordLength(String password){
-        if(password.length() < 6) {
-            Toast.makeText(MainActivity.this, "Passwords should contain 6 characters",
-                    Toast.LENGTH_SHORT).show();
         }
     }
 }
