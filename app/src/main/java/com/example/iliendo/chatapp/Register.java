@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.firebase.client.Firebase;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -19,6 +20,8 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class Register extends AppCompatActivity {
     private FirebaseAuth mAuth;
@@ -66,7 +69,7 @@ public class Register extends AppCompatActivity {
      * @param password provided by the user
      * @param passwordRepeat provided by the user to check if the password is spelled correctly
      */
-    private void signUp(String email, final String password, String passwordRepeat) {
+    private void signUp(final String email, final String password, String passwordRepeat) {
         if (matchPassword(password, passwordRepeat)) {
             mAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -92,10 +95,19 @@ public class Register extends AppCompatActivity {
                                     e.printStackTrace();
                                 }
                             } else {
-                                // Sign in success, update UI with the signed-in user's information
-                                FirebaseUser user = mAuth.getCurrentUser();
+                                String userId = mNickname.getText().toString().trim();
+                                String email = mEmail.getText().toString().trim();
 
-                                setNickname(mNickname.getText().toString().trim());
+                                setNickname(userId);
+
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+
+                                DatabaseReference mRef = mDatabase.child("userDetails").child(userId);
+
+                                mRef.child("nickname").setValue(userId);
+                                mRef.child("email").setValue(email);
+                                mRef.child("imageUrl").setValue("empty");
                                 Toast.makeText(Register.this, "The account has been registered",
                                         Toast.LENGTH_SHORT).show();
                             }
@@ -122,7 +134,7 @@ public class Register extends AppCompatActivity {
                             finish();
                             startActivity(i);
                         } else {
-                            // Error handling
+                            // TODO: Error handling
 
                         }
                     }

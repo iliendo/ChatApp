@@ -1,8 +1,6 @@
 package com.example.iliendo.chatapp;
 
 import android.Manifest;
-import android.app.Notification;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -11,12 +9,9 @@ import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -56,6 +51,8 @@ public class UploadData extends AppCompatActivity {
 
         Firebase.setAndroidContext(this);
         mAuth = FirebaseAuth.getInstance();
+        final String name = mAuth.getCurrentUser().getDisplayName();
+
 
         // Initialization of assets
         mImageView = findViewById(R.id.iv_profile);
@@ -73,19 +70,13 @@ public class UploadData extends AppCompatActivity {
                     }
                 }  else {
                     callGallery();
-                    // Gives the image a name unique to the user
-                    String name = mAuth.getCurrentUser().getEmail().toString();
-
-                    Firebase childRefName = mRoofRef.child("Image_Title");
-                    childRefName.setValue(name);
-
                 }
             }
         });
 
         // Initialize database & storage
         mDatabaseRef = FirebaseDatabase.getInstance().getReference();
-        mRoofRef = new Firebase("https://chatapp-8568a.firebaseio.com/").child("User_Details").push();
+        mRoofRef = new Firebase("https://chatapp-8568a.firebaseio.com/").child("userDetails").child(name);
         mStorageRef = FirebaseStorage.getInstance().getReferenceFromUrl("gs://chatapp-8568a.appspot.com/");
 
     }
@@ -120,14 +111,14 @@ public class UploadData extends AppCompatActivity {
             mImageUri = data.getData();
             mImageView.setImageURI(mImageUri);
             // User_images is the name of the folder
-            StorageReference filePath = mStorageRef.child("User_Image").child(mImageUri.getLastPathSegment());
+            StorageReference filePath = mStorageRef.child("userImage").child(mImageUri.getLastPathSegment());
 
             filePath.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Uri downloadUri = taskSnapshot.getDownloadUrl();
 
-                    mRoofRef.child("Image_URL").setValue(downloadUri.toString());
+                    mRoofRef.child("imageUrl").setValue(downloadUri.toString());
 
                     Glide.with(getApplicationContext())
                             .load(downloadUri)
