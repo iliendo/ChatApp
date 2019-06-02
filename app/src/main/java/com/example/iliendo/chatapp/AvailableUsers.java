@@ -66,6 +66,7 @@ public class AvailableUsers extends AppCompatActivity {
                 // Stop progressbar when data is loaded
                 mProgressBar.setVisibility(ProgressBar.INVISIBLE);
 
+
                 if (!model.getNickname().equals("Null")) {
 
                     // Use dataclass to get data from firebase
@@ -116,7 +117,7 @@ public class AvailableUsers extends AppCompatActivity {
                 Glide.with(itemView.getContext())
                         .load(url)
                         .thumbnail(0.5f)
-                        .placeholder(R.drawable.loading)
+                        .placeholder(R.drawable.profile)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(mIvProfile);
             }
