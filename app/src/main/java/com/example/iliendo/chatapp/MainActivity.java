@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -67,7 +68,13 @@ public class  MainActivity extends AppCompatActivity {
         mSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                signIn(mEmail.getText().toString().trim(), mPassword.getText().toString().trim());
+                String email = mEmail.getText().toString().trim();
+                String password = mPassword.getText().toString().trim();
+                if (email.isEmpty() || password.isEmpty()){
+                    Toast.makeText(MainActivity.this, "Please fill in both fields", Toast.LENGTH_SHORT).show();
+                } else {
+                    signIn(email, password);
+                }
             }
         });
 
