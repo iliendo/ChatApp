@@ -1,6 +1,7 @@
 package com.example.iliendo.chatapp;
 
 import android.os.Bundle;
+
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -9,15 +10,24 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Settings extends AppCompatActivity {
 
-    private static final String TAG = "Settings";
-
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
+    private ChangePassword tab1Fragment;
+    private ChangeImage tab2Fragment;
+
+    // Firebase
+    private FirebaseUser user;
+    private FirebaseAuth mAuth;
+    AuthCredential mCredential;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,15 +46,15 @@ public class Settings extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new Tab1Fragment(), "Details");
-        adapter.addFragment(new Tab2Fragment(), "Picture");
+        adapter.addFragment(new ChangeImage(), "Picture");
+        adapter.addFragment(new ChangeEmail(), "Email");
+        adapter.addFragment(new ChangePassword(), "Password");
 
         viewPager.setAdapter(adapter);
     }
 
-    /**
-     * Handles the fragments
-     */
+
+
     private class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         private final List<Fragment> mFragmentList = new ArrayList<>();

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -24,11 +25,15 @@ public class  MainActivity extends AppCompatActivity {
 
     // TODO: GETTERS
     public static FirebaseDatabase mDatabase;
+    public static int deviceWidth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        DisplayMetrics metrics = getApplicationContext().getResources().getDisplayMetrics();
+        deviceWidth = metrics.widthPixels;
 
         // Creates local database I guess?
         if(mDatabase == null){

@@ -1,6 +1,6 @@
 package com.example.iliendo.chatapp;
 
-import android.os.SystemClock;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,8 +15,11 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class AvailableUsers extends AppCompatActivity {
     TextView mTvNickname;
@@ -73,11 +76,40 @@ public class AvailableUsers extends AppCompatActivity {
                     viewHolder.NickName(model.getNickname());
                     viewHolder.Person_Image(model.getImageUrl());
 
-                    if (model.getEmail().equals(Welcome.loggedInUser)) {
+                    if (model.getEmail().equals(Welcome.currentUser)) {
                         viewHolder.LayoutHide();
                     }
+
+                    viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+
+                        @Override
+                        public void onClick(final View v) {
+                            DatabaseReference mRef = mFirebaseAdapter.getRef(position);
+                            mRef.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    String retrieveName = dataSnapshot.child("nickname").getValue(String.class);
+                                    String retrieveEmail = dataSnapshot.child("email").getValue(String.class);
+                                    String retrieveImage = dataSnapshot.child("imageUrl").getValue(String.class);
+
+                                    Intent intent = new Intent(getApplicationContext(), ChatBubble.class);
+                                    intent.putExtra("nickname", retrieveName);
+                                    intent.putExtra("email", retrieveEmail);
+                                    intent.putExtra("imageurl", retrieveImage);
+
+                                    startActivity(intent);
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+                    });
                 }
             }
+
         };
 
         mRvUsers.setAdapter(mFirebaseAdapter);

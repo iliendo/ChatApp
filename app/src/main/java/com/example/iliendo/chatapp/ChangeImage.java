@@ -14,8 +14,7 @@ import android.widget.ProgressBar;
  * Created by iliendo on 6/3/19.
  */
 
-public class Tab2Fragment extends Fragment {
-    private static final String TAG = "Tab2Fragment";
+public class ChangeImage extends Fragment {
 
     private ImageView mImageView;
     private ProgressBar mProgressBar;
@@ -23,7 +22,7 @@ public class Tab2Fragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.tab2_fragment, container, false);
+        View view = inflater.inflate(R.layout.fragment_change_image, container, false);
 
         mImageView = view.findViewById(R.id.iv_profile);
         mProgressBar = view.findViewById(R.id.pb_progressbar);

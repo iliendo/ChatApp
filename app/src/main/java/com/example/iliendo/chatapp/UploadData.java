@@ -11,12 +11,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,9 +34,12 @@ import org.jetbrains.annotations.NotNull;
 public class UploadData extends AppCompatActivity {
     // TODO: Update other data too (like mail and password)
     // Assets
+    private EditText mEmail;
+    private EditText mPassword;
+    private EditText mRepeatPassword;
     private ImageView mImageView;
-    private Button mSelectImage;
     private ProgressBar mProgressBar;
+    private Button mSubmit;
 
     public static final int READ_EXTERNAL_STORAGE = 0;
     private static final int GALLERY_INTENT = 0;
@@ -47,7 +52,6 @@ public class UploadData extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,14 +60,15 @@ public class UploadData extends AppCompatActivity {
         Firebase.setAndroidContext(this);
         mAuth = FirebaseAuth.getInstance();
         final String name = mAuth.getCurrentUser().getDisplayName();
-
+        final String email = mAuth.getCurrentUser().getEmail();
 
         // Initialization of assets
+        mEmail = findViewById(R.id.et_email);
         mImageView = findViewById(R.id.iv_profile);
-        mSelectImage = findViewById(R.id.btn_select_image);
         mProgressBar = findViewById(R.id.pb_progressbar);
+        mSubmit = findViewById(R.id.btn_submit);
 
-        mSelectImage.setOnClickListener(new View.OnClickListener() {
+        mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -79,10 +84,19 @@ public class UploadData extends AppCompatActivity {
             }
         });
 
+        mSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
         // Initialize database & storage
         mDatabaseRef = FirebaseDatabase.getInstance().getReference();
         mRoofRef = new Firebase("https://chatapp-8568a.firebaseio.com/").child("userDetails").child(name);
         mStorageRef = FirebaseStorage.getInstance().getReferenceFromUrl("gs://chatapp-8568a.appspot.com/");
+
+        mEmail.setText(email);
 
     }
 

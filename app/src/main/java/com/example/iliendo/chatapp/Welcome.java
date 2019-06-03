@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.firebase.client.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
@@ -19,7 +18,7 @@ public class Welcome extends AppCompatActivity {
 
     // TODO: GETTER
     public static FirebaseDatabase mDatabase;
-    static String loggedInUser;
+    public static String currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +47,7 @@ public class Welcome extends AppCompatActivity {
 
         if (user != null){
             nickname.setText("Welcome " + user.getDisplayName());
-            loggedInUser = user.getEmail();
+            currentUser = user.getDisplayName();
         }
 
         // Button action
@@ -71,7 +70,7 @@ public class Welcome extends AppCompatActivity {
         mViewData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivity(new Intent(getApplicationContext(), Settings.class));
             }
         });
 
