@@ -54,7 +54,7 @@ public class  MainActivity extends AppCompatActivity {
         // Check if the user is already logged in, if so: redirect
         if (mAuth.getCurrentUser() != null) {
             finish();
-            startActivity(new Intent(getApplicationContext(), Welcome.class));
+            startActivity(new Intent(getApplicationContext(), AvailableUsers.class));
         }
 
         mRegister.setOnClickListener(new View.OnClickListener() {
@@ -92,7 +92,7 @@ public class  MainActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Intent i = new Intent(MainActivity.this, Welcome.class);
+                            Intent i = new Intent(MainActivity.this, AvailableUsers.class);
                             finish();
                             startActivity(i);
                         } else {

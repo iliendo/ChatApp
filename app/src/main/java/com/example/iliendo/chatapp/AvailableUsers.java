@@ -5,6 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -15,6 +18,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,14 +26,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class AvailableUsers extends AppCompatActivity {
-    TextView mTvNickname;
-    ImageView mIvProfile;
-    RecyclerView mRvUsers;
-    ProgressBar mProgressBar;
-    LinearLayoutManager mLinearLayoutManager;
+    private TextView mTvNickname;
+    private ImageView mIvProfile;
+    private RecyclerView mRvUsers;
+    private ProgressBar mProgressBar;
+    private LinearLayoutManager mLinearLayoutManager;
 
-    FirebaseDatabase mDatabase;
-    DatabaseReference mRef;
+    private FirebaseAuth mAuth;
+    private FirebaseDatabase mDatabase;
+    private DatabaseReference mRef;
     public FirebaseRecyclerAdapter<ShowChatActivity, ShowChatViewHolder> mFirebaseAdapter;
 
     @Override
@@ -42,6 +47,7 @@ public class AvailableUsers extends AppCompatActivity {
         }
 
         // Database
+        mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
         mRef = mDatabase.getReference("userDetails");
         // Offline support of firebase database
@@ -54,6 +60,30 @@ public class AvailableUsers extends AppCompatActivity {
         mLinearLayoutManager = new LinearLayoutManager(AvailableUsers.this);
 
         mRvUsers.setLayoutManager(mLinearLayoutManager);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_settings, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.action_settings:{
+                startActivity(new Intent(getApplicationContext(), Settings.class));
+                return true;
+            }
+            case R.id.action_logout: {
+                mAuth.signOut();
+                finish();
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -76,7 +106,7 @@ public class AvailableUsers extends AppCompatActivity {
                     viewHolder.NickName(model.getNickname());
                     viewHolder.Person_Image(model.getImageUrl());
 
-                    if (model.getEmail().equals(Welcome.currentUser)) {
+                    if (model.getEmail().equals(mAuth.getCurrentUser().getEmail())) {
                         viewHolder.LayoutHide();
                     }
 

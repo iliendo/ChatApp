@@ -130,7 +130,7 @@ public class Register extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Intent i = new Intent(Register.this, Welcome.class);
+                            Intent i = new Intent(Register.this, AvailableUsers.class);
                             finish();
                             startActivity(i);
                         } else {
