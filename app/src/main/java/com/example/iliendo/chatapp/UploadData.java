@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -22,15 +23,18 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import org.jetbrains.annotations.NotNull;
 
 public class UploadData extends AppCompatActivity {
+    // TODO: Update other data too (like mail and password)
     // Assets
     private ImageView mImageView;
     private Button mSelectImage;
+    private ProgressBar mProgressBar;
 
     public static final int READ_EXTERNAL_STORAGE = 0;
     private static final int GALLERY_INTENT = 0;
@@ -57,18 +61,19 @@ public class UploadData extends AppCompatActivity {
         // Initialization of assets
         mImageView = findViewById(R.id.iv_profile);
         mSelectImage = findViewById(R.id.btn_select_image);
+        mProgressBar = findViewById(R.id.pb_progressbar);
 
         mSelectImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 // Checks for permission
-                if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, READ_EXTERNAL_STORAGE);
                     }
-                }  else {
+                } else {
                     callGallery();
                 }
             }
@@ -83,11 +88,11 @@ public class UploadData extends AppCompatActivity {
 
     // Check if there is permission for storage access
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NotNull String[] permissions, @NotNull int[] grantResults){
+    public void onRequestPermissionsResult(int requestCode, @NotNull String[] permissions, @NotNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode){
+        switch (requestCode) {
             case READ_EXTERNAL_STORAGE:
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     callGallery();
                 } else {
                     Toast.makeText(getApplicationContext(), "...", Toast.LENGTH_SHORT).show();
@@ -107,7 +112,8 @@ public class UploadData extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == GALLERY_INTENT && resultCode == RESULT_OK){
+        if (requestCode == GALLERY_INTENT && resultCode == RESULT_OK) {
+            Toast.makeText(getApplicationContext(), "Uploading...", Toast.LENGTH_SHORT).show();
             mImageUri = data.getData();
             mImageView.setImageURI(mImageUri);
             // User_images is the name of the folder
@@ -125,6 +131,15 @@ public class UploadData extends AppCompatActivity {
                             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                             .into(mImageView);
                     Toast.makeText(getApplicationContext(), "Image has been uploaded", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                    mProgressBar.setVisibility(View.VISIBLE);
+                    double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                    if (progress == 100.0) {
+                        mProgressBar.setVisibility(View.INVISIBLE);
+                    }
                 }
             });
         }
