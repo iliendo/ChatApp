@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.firebase.client.Firebase;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -26,7 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class Register extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private EditText mNickname, mEmail, mPassword, mPasswordRepeat;
-    private Button mRegister, mSignIn;
+    private Button mRegister;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,21 +42,12 @@ public class Register extends AppCompatActivity {
 
         // Buttons initialization
         mRegister = findViewById(R.id.btn_register);
-        mSignIn = findViewById(R.id.btn_signin);
 
         mRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 signUp(mEmail.getText().toString().trim(), mPassword.getText().toString().trim(),
                         mPasswordRepeat.getText().toString().trim());
-            }
-        });
-
-        mSignIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-
             }
         });
 
@@ -118,28 +108,6 @@ public class Register extends AppCompatActivity {
         }
     }
 
-    /**
-     * Go to different activity when authentication is succesfull
-     * @param email that the user provides
-     * @param password that the user provides
-     */
-    private void signIn(String email, final String password){
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Intent i = new Intent(Register.this, AvailableUsers.class);
-                            finish();
-                            startActivity(i);
-                        } else {
-                            // TODO: Error handling
-
-                        }
-                    }
-                });
-    }
 
     /**
      * Set the nickname for the account

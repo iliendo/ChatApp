@@ -33,13 +33,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Welcome" />
-        <activity android:name=".UploadData" />
         <activity android:name=".Register" />
         <activity android:name=".ResetPassword" />
         <activity android:name=".AvailableUsers" />
-        <activity android:name=".Chat" />
-        <activity android:name=".ChatBubble" />
         <activity
             android:name=".Settings"
             android:label="@string/title_activity_settings"

@@ -1,6 +1,5 @@
 package com.example.iliendo.chatapp;
 
-
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -46,7 +46,14 @@ public class ChangeEmail extends Fragment {
             public void onClick(View view) {
                 password = mPassword.getText().toString().trim();
                 email = mEmail.getText().toString().trim();
-                changeEmail(email, password);
+
+                if (password.isEmpty() || email.isEmpty()){
+                    Toast.makeText(getActivity(), "Email or password field should not be empty",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    changeEmail(email, password);
+                }
+
             }
         });
 
@@ -57,21 +64,22 @@ public class ChangeEmail extends Fragment {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         // Get auth credentials from the user for re-authentication
-        AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), password); // Current Login Credentials \\
+        AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), password);
         // Prompt the user to re-provide their sign-in credentials
         user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
 
 
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                //Now change your email address \\
-                //----------------Code for Changing Email Address----------\\
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 user.updateEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            System.out.println("72: email changed");
+                            Toast.makeText(getActivity(), "Email has been changed", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // TODO: Check email and password requirements
+                            Toast.makeText(getActivity(), "Password isn't correct", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

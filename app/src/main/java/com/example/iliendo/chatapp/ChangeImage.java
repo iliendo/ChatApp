@@ -1,6 +1,5 @@
 package com.example.iliendo.chatapp;
 
-import android.*;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -23,8 +22,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.client.Firebase;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -33,7 +30,6 @@ import com.google.firebase.storage.UploadTask;
 import org.jetbrains.annotations.NotNull;
 
 import static android.app.Activity.RESULT_OK;
-import static com.example.iliendo.chatapp.UploadData.READ_EXTERNAL_STORAGE;
 
 /**
  * Created by iliendo on 6/3/19.

@@ -26,8 +26,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class AvailableUsers extends AppCompatActivity {
-    private TextView mTvNickname;
-    private ImageView mIvProfile;
     private RecyclerView mRvUsers;
     private ProgressBar mProgressBar;
     private LinearLayoutManager mLinearLayoutManager;
@@ -55,7 +53,6 @@ public class AvailableUsers extends AppCompatActivity {
 
         // Initializing components
         mProgressBar = findViewById(R.id.pb_progress_bar);
-        mTvNickname = findViewById(R.id.tv_nickname);
         mRvUsers = findViewById(R.id.rv_users);
         mLinearLayoutManager = new LinearLayoutManager(AvailableUsers.this);
 
@@ -104,7 +101,7 @@ public class AvailableUsers extends AppCompatActivity {
 
                     // Use dataclass to get data from firebase
                     viewHolder.NickName(model.getNickname());
-                    viewHolder.Person_Image(model.getImageUrl());
+                    viewHolder.PersonImage(model.getImageUrl());
 
                     if (model.getEmail().equals(mAuth.getCurrentUser().getEmail())) {
                         viewHolder.LayoutHide();
@@ -122,7 +119,7 @@ public class AvailableUsers extends AppCompatActivity {
                                     String retrieveEmail = dataSnapshot.child("email").getValue(String.class);
                                     String retrieveImage = dataSnapshot.child("imageUrl").getValue(String.class);
 
-                                    Intent intent = new Intent(getApplicationContext(), ChatBubble.class);
+                                    Intent intent = new Intent(getApplicationContext(), AvailableUsers.class);
                                     intent.putExtra("nickname", retrieveName);
                                     intent.putExtra("email", retrieveEmail);
                                     intent.putExtra("imageurl", retrieveImage);
@@ -162,18 +159,16 @@ public class AvailableUsers extends AppCompatActivity {
 
 
         private void NickName(String title) {
-            // Log.d("LOGGED", "Setting Name: ");
             mNickname.setText(title);
         }
 
         private void LayoutHide() {
             params.height = 0;
-            //itemView.setLayoutParams(params);
             mLayout.setLayoutParams(params);
 
         }
 
-        private void Person_Image(String url) {
+        private void PersonImage(String url) {
 
             if (!url.equals("Null")) {
                 Glide.with(itemView.getContext())
