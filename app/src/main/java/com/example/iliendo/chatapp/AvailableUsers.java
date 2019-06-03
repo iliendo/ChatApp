@@ -179,7 +179,7 @@ public class AvailableUsers extends AppCompatActivity {
                 Glide.with(itemView.getContext())
                         .load(url)
                         .thumbnail(0.5f)
-                        .placeholder(R.drawable.profile)
+                        .placeholder(R.drawable.ic_person_black_24dp)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(mIvProfile);
             }
