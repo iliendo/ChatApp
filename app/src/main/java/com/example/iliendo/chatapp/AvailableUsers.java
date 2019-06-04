@@ -119,7 +119,7 @@ public class AvailableUsers extends AppCompatActivity {
                                     String retrieveEmail = dataSnapshot.child("email").getValue(String.class);
                                     String retrieveImage = dataSnapshot.child("imageUrl").getValue(String.class);
 
-                                    Intent intent = new Intent(getApplicationContext(), AvailableUsers.class);
+                                    Intent intent = new Intent(getApplicationContext(), Conversation.class);
                                     intent.putExtra("nickname", retrieveName);
                                     intent.putExtra("email", retrieveEmail);
                                     intent.putExtra("imageurl", retrieveImage);

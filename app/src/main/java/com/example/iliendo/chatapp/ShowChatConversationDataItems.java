@@ -5,31 +5,30 @@ package com.example.iliendo.chatapp;
  */
 
 public class ShowChatConversationDataItems {
-    private String incommingMessage;
-    private String outgoingMessage;
+    private String message;
+    private String sender;
 
-    public ShowChatConversationDataItems(){
-
+    public ShowChatConversationDataItems() {
     }
 
-    public ShowChatConversationDataItems(String incommingMessage, String outgoingMessage) {
-        this.incommingMessage = incommingMessage;
-        this.outgoingMessage = outgoingMessage;
+    public ShowChatConversationDataItems(String message, String sender) {
+        this.message = message;
+        this.sender = sender;
     }
 
-    public String getIncommingMessage() {
-        return incommingMessage;
+    public String getMessage() {
+        return message;
     }
 
-    public void setIncommingMessage(String incommingMessage) {
-        this.incommingMessage = incommingMessage;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
-    public String getOutgoingMessage() {
-        return outgoingMessage;
+    public String getSender() {
+        return sender;
     }
 
-    public void setOutgoingMessage(String outgoingMessage) {
-        this.outgoingMessage = outgoingMessage;
+    public void setSender(String sender) {
+        this.sender = sender;
     }
 }
