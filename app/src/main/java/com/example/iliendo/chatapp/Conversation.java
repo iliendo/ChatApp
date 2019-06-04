@@ -1,6 +1,10 @@
 package com.example.iliendo.chatapp;
 
 import android.graphics.Color;
+import android.media.MediaPlayer;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.v4.util.ArrayMap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,6 +19,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -42,10 +48,18 @@ public class Conversation extends AppCompatActivity {
     private DatabaseReference mSenderRef, mReceiverRef;
     private FirebaseRecyclerAdapter<ShowChatConversationDataItems, ChatConversationViewHolder> mFirebaseAdapter;
 
+    private MediaPlayer ping;
+    private MediaPlayer pong;
+
+    private boolean isPing = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
+
+        // Mediaplayer
+        ping = MediaPlayer.create(this, R.raw.ping);
+        pong = MediaPlayer.create(this, R.raw.pong);
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mAuth = FirebaseAuth.getInstance();
@@ -54,7 +68,6 @@ public class Conversation extends AppCompatActivity {
 
         // TODO: Add keep synced?
         // Creating many to many relation
-        System.out.println(userId);
         mSenderRef = mFirebaseDatabase.getReference().child("chat").child(userId).child(getIntent().getStringExtra("nickname"));
         mReceiverRef = mFirebaseDatabase.getReference().child("chat").child(getIntent().getStringExtra("nickname")).child(userId);
 
@@ -81,10 +94,19 @@ public class Conversation extends AppCompatActivity {
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 String message = mMessageArea.getText().toString().trim();
 
                 if (!message.isEmpty()) {
-                    // TODO: Add sound byte
+                    // Play sound when message is sente
+                    if (isPing == false) {
+                        isPing = true;
+                        ping.start();
+                    } else {
+                        isPing = false;
+                        pong.start();
+                    }
+
                     ArrayMap<String, String> arrayMap = new ArrayMap<>();
                     arrayMap.put("message", message);
                     arrayMap.put("sender", userId);
@@ -179,24 +201,23 @@ public class Conversation extends AppCompatActivity {
         public ChatConversationViewHolder(final View itemView) {
             super(itemView);
             mView = itemView;
-            mMessage = (TextView) mView.findViewById(R.id.tv_message);
-            mSenderName = (TextView) mView.findViewById(R.id.tv_name);
+            mMessage = mView.findViewById(R.id.tv_message);
+            mSenderName = mView.findViewById(R.id.tv_name);
 
             params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             text_params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            layout = (LinearLayout) mView.findViewById(R.id.chat_linear_layout);
+            layout = mView.findViewById(R.id.chat_linear_layout);
         }
 
         private void getSender(String title) {
 
 
             if (title.equals(userId)) {
-                //Log.d("LOGGED", "getSender: ");
                 params.setMargins((MainActivity.deviceWidth/ 3), 5, 10, 10);
                 text_params.setMargins(15, 10, 0, 5);
                 mSenderName.setLayoutParams(text_params);
                 mView.setLayoutParams(params);
-                mView.setBackgroundResource(R.drawable.shape_outgoing_message);
+                mView.setBackgroundResource(R.drawable.shape_incoming_message);
                 mSenderName.setText("YOU");
 
             } else {
@@ -212,16 +233,35 @@ public class Conversation extends AppCompatActivity {
 
         private void getMessage(String title) {
 
-            if (!mSenderName.getText().equals(userId)) {
-                text_params.setMargins(15, 10, 22, 15);
-            } else {
-                text_params.setMargins(65, 10, 22, 15);
-            }
+            if(!mSenderName.getText().equals(userId)) {
+                if (!mSenderName.getText().equals(userId)) {
+                    text_params.setMargins(15, 10, 22, 15);
+                } else {
+                    text_params.setMargins(65, 10, 22, 15);
+                }
 
-            mMessage.setLayoutParams(text_params);
-            mMessage.setText(title);
-            mMessage.setTextColor(Color.parseColor("#FFFFFF"));
-            mMessage.setVisibility(View.VISIBLE);
+                mMessage.setLayoutParams(text_params);
+                mMessage.setText(title);
+                mMessage.setTextColor(Color.parseColor("#FFFFFF"));
+                mMessage.setVisibility(View.VISIBLE);
+            } else {
+                if (true)
+                {
+                    mMessage.setVisibility(View.GONE);
+                    Glide.with(itemView.getContext())
+                            .load(title)
+                            .fitCenter()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL);
+                }
+                else
+                {
+                    mMessage.setVisibility(View.GONE);
+                    Glide.with(itemView.getContext())
+                            .load(title)
+                            .fitCenter()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL);
+                }
+            }
 
         }
 
