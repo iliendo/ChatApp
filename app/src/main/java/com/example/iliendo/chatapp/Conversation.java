@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -206,7 +205,7 @@ public class Conversation extends AppCompatActivity {
                 text_params.setMargins(15, 10, 0, 5);
                 mSenderName.setLayoutParams(text_params);
                 mView.setLayoutParams(params);
-                mView.setBackgroundResource(R.drawable.shape_incoming_message);
+                mView.setBackgroundResource(R.drawable.shape_outgoing_message);
                 mSenderName.setText("YOU");
 
             } else {
@@ -233,6 +232,7 @@ public class Conversation extends AppCompatActivity {
                 mMessage.setText(title);
                 mMessage.setTextColor(Color.parseColor("#FFFFFF"));
                 mMessage.setVisibility(View.VISIBLE);
+                mMessage.setPadding(20, 0,0,0);
             } else {
                 if (mSenderName.getText().equals(userId)) {
                     text_params.setMargins(15, 10, 22, 15);
