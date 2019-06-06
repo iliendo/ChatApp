@@ -34,10 +34,8 @@ public class Conversation extends AppCompatActivity {
     // Attributes
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
-    private ImageView mNoChatIcon, mSendButton;
+    private ImageView mSendButton;
     private EditText mMessageArea;
-    private TextView mNoChatText;
-    private ProgressBar mProgressbar;
 
 //    public static String senderName;
     private static String userId;
@@ -81,11 +79,8 @@ public class Conversation extends AppCompatActivity {
 
         // Initializing attributes
         mRecyclerView = findViewById(R.id.rv_chat);
-        mNoChatIcon = findViewById(R.id.iv_no_data);
         mSendButton = findViewById(R.id.iv_send);
         mMessageArea = findViewById(R.id.et_message);
-        mNoChatText = findViewById(R.id.tv_no_data);
-        mProgressbar = findViewById(R.id.pb_progressbar);
 
         mLinearLayoutManager = new LinearLayoutManager(Conversation.this);
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
@@ -145,10 +140,7 @@ public class Conversation extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // If there is a history, load the data from firebase
                 if (dataSnapshot.hasChildren()) {
-                    mProgressbar.setVisibility(View.GONE);
                     mRecyclerView.setVisibility(View.VISIBLE);
-                    mNoChatIcon.setVisibility(View.GONE);
-                    mNoChatText.setVisibility(View.GONE);
 
                     // Move the chat to the most recent message
                     mRecyclerView.postDelayed(new Runnable() {
@@ -175,10 +167,7 @@ public class Conversation extends AppCompatActivity {
                         }
                     });
                 } else {
-                    mProgressbar.setVisibility(View.GONE);
                     mRecyclerView.setVisibility(View.GONE);
-                    mNoChatIcon.setVisibility(View.VISIBLE);
-                    mNoChatText.setVisibility(View.VISIBLE);
                 }
 
             }
@@ -233,7 +222,7 @@ public class Conversation extends AppCompatActivity {
 
         private void getMessage(String title) {
 
-            if(!mSenderName.getText().equals(userId)) {
+            if(mSenderName.getText().equals(userId)) {
                 if (!mSenderName.getText().equals(userId)) {
                     text_params.setMargins(15, 10, 22, 15);
                 } else {
