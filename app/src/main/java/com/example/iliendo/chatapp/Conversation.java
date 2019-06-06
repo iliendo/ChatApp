@@ -222,7 +222,7 @@ public class Conversation extends AppCompatActivity {
 
         private void getMessage(String title) {
 
-            if(mSenderName.getText().equals(userId)) {
+            if(!mSenderName.getText().equals(userId)) {
                 if (!mSenderName.getText().equals(userId)) {
                     text_params.setMargins(15, 10, 22, 15);
                 } else {
@@ -234,22 +234,16 @@ public class Conversation extends AppCompatActivity {
                 mMessage.setTextColor(Color.parseColor("#FFFFFF"));
                 mMessage.setVisibility(View.VISIBLE);
             } else {
-                if (true)
-                {
-                    mMessage.setVisibility(View.GONE);
-                    Glide.with(itemView.getContext())
-                            .load(title)
-                            .fitCenter()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL);
+                if (mSenderName.getText().equals(userId)) {
+                    text_params.setMargins(15, 10, 22, 15);
+                } else {
+                    text_params.setMargins(65, 10, 22, 15);
                 }
-                else
-                {
-                    mMessage.setVisibility(View.GONE);
-                    Glide.with(itemView.getContext())
-                            .load(title)
-                            .fitCenter()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL);
-                }
+
+                mMessage.setLayoutParams(text_params);
+                mMessage.setText(title);
+                mMessage.setTextColor(Color.parseColor("#FFFFFF"));
+                mMessage.setVisibility(View.VISIBLE);
             }
 
         }
