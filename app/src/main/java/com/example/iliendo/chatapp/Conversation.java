@@ -11,8 +11,10 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,11 +32,16 @@ import com.google.firebase.database.ValueEventListener;
 
 public class Conversation extends AppCompatActivity {
 
+    public static final String SENDER = "sender";
+    public static final String MESSAGE = "message";
+    public static final String NICKNAME = "nickname";
+    public static final String CHAT = "chat";
     // Attributes
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
-    private ImageView mSendButton;
+    private ImageView mSendButton, mNoDataIv;
     private EditText mMessageArea;
+    private TextView mNoDataTv;
 
 //    public static String senderName;
     private static String userId;
@@ -45,8 +52,8 @@ public class Conversation extends AppCompatActivity {
     private DatabaseReference mSenderRef, mReceiverRef;
     private FirebaseRecyclerAdapter<ShowChatConversationDataItems, ChatConversationViewHolder> mFirebaseAdapter;
 
-    private MediaPlayer ping;
-    private MediaPlayer pong;
+    private static MediaPlayer ping;
+    private static MediaPlayer pong;
 
     private boolean isPing = false;
     @Override
@@ -65,8 +72,8 @@ public class Conversation extends AppCompatActivity {
 
         // TODO: Add keep synced?
         // Creating many to many relation
-        mSenderRef = mFirebaseDatabase.getReference().child("chat").child(userId).child(getIntent().getStringExtra("nickname"));
-        mReceiverRef = mFirebaseDatabase.getReference().child("chat").child(getIntent().getStringExtra("nickname")).child(userId);
+        mSenderRef = mFirebaseDatabase.getReference().child(CHAT).child(userId).child(getIntent().getStringExtra(NICKNAME));
+        mReceiverRef = mFirebaseDatabase.getReference().child(CHAT).child(getIntent().getStringExtra(NICKNAME)).child(userId);
 
         // TODO: Add code in available users to do this
         // Show the name of the person you're chatting with
@@ -80,6 +87,8 @@ public class Conversation extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.rv_chat);
         mSendButton = findViewById(R.id.iv_send);
         mMessageArea = findViewById(R.id.et_message);
+        mNoDataIv = findViewById(R.id.iv_no_chat);
+        mNoDataTv = findViewById(R.id.tv_no_chat);
 
         mLinearLayoutManager = new LinearLayoutManager(Conversation.this);
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
@@ -93,17 +102,17 @@ public class Conversation extends AppCompatActivity {
 
                 if (!message.isEmpty()) {
                     // Play sound when message is sente
-                    if (isPing == false) {
-                        isPing = true;
-                        ping.start();
-                    } else {
-                        isPing = false;
-                        pong.start();
-                    }
+//                    if (isPing == false) {
+//                        isPing = true;
+//                        ping.start();
+//                    } else {
+//                        isPing = false;
+//                        pong.start();
+//                    }
 
                     ArrayMap<String, String> arrayMap = new ArrayMap<>();
-                    arrayMap.put("message", message);
-                    arrayMap.put("sender", userId);
+                    arrayMap.put(MESSAGE, message);
+                    arrayMap.put(SENDER, userId);
 
                     // Data will be sent to database
                     mSenderRef.push().setValue(arrayMap);
@@ -139,6 +148,8 @@ public class Conversation extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // If there is a history, load the data from firebase
                 if (dataSnapshot.hasChildren()) {
+                    mNoDataIv.setVisibility(View.GONE);
+                    mNoDataTv.setVisibility(View.GONE);
                     mRecyclerView.setVisibility(View.VISIBLE);
 
                     // Move the chat to the most recent message
@@ -166,6 +177,8 @@ public class Conversation extends AppCompatActivity {
                         }
                     });
                 } else {
+                    mNoDataTv.setVisibility(View.VISIBLE);
+                    mNoDataIv.setVisibility(View.VISIBLE);
                     mRecyclerView.setVisibility(View.GONE);
                 }
 
@@ -180,6 +193,8 @@ public class Conversation extends AppCompatActivity {
 
     //View Holder For Recycler View
     public static class ChatConversationViewHolder extends RecyclerView.ViewHolder {
+        public static final String FFFFFF = "#FFFFFF";
+        public static final String YOU = "You ";
         private final TextView mMessage, mSenderName;
         private View mView;
         final LinearLayout.LayoutParams params, text_params;
@@ -206,7 +221,8 @@ public class Conversation extends AppCompatActivity {
                 mSenderName.setLayoutParams(text_params);
                 mView.setLayoutParams(params);
                 mView.setBackgroundResource(R.drawable.shape_outgoing_message);
-                mSenderName.setText("YOU");
+                mView.setPadding(20,0,10,0);
+                mSenderName.setText(YOU);
 
             } else {
                 params.setMargins(10, 0, (MainActivity.deviceWidth/ 3), 10);
@@ -215,6 +231,7 @@ public class Conversation extends AppCompatActivity {
                 mSenderName.setLayoutParams(text_params);
                 mView.setLayoutParams(params);
                 mView.setBackgroundResource(R.drawable.shape_incoming_message);
+                mView.setPadding(60,0,10,0);
                 mSenderName.setText(userId);
             }
         }
@@ -230,9 +247,9 @@ public class Conversation extends AppCompatActivity {
 
                 mMessage.setLayoutParams(text_params);
                 mMessage.setText(title);
-                mMessage.setTextColor(Color.parseColor("#FFFFFF"));
+                mMessage.setTextColor(Color.parseColor(FFFFFF));
                 mMessage.setVisibility(View.VISIBLE);
-                mMessage.setPadding(20, 0,0,0);
+                ping.start();
             } else {
                 if (mSenderName.getText().equals(userId)) {
                     text_params.setMargins(15, 10, 22, 15);
@@ -242,8 +259,9 @@ public class Conversation extends AppCompatActivity {
 
                 mMessage.setLayoutParams(text_params);
                 mMessage.setText(title);
-                mMessage.setTextColor(Color.parseColor("#FFFFFF"));
+                mMessage.setTextColor(Color.parseColor(FFFFFF));
                 mMessage.setVisibility(View.VISIBLE);
+                pong.start();
             }
 
         }

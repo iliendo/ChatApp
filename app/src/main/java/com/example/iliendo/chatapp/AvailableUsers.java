@@ -101,7 +101,10 @@ public class AvailableUsers extends AppCompatActivity {
 
                     // Use dataclass to get data from firebase
                     viewHolder.NickName(model.getNickname());
-                    viewHolder.PersonImage(model.getImageUrl());
+                    System.out.println(model.getImageUrl());
+                    if (!(model.getImageUrl() == null)){
+                        viewHolder.PersonImage(model.getImageUrl());
+                    }
 
                     if (model.getEmail().equals(mAuth.getCurrentUser().getEmail())) {
                         viewHolder.LayoutHide();
@@ -170,7 +173,7 @@ public class AvailableUsers extends AppCompatActivity {
 
         private void PersonImage(String url) {
 
-            if (!url.equals("Null")) {
+            if (!url.isEmpty()) {
                 Glide.with(itemView.getContext())
                         .load(url)
                         .thumbnail(0.5f)
